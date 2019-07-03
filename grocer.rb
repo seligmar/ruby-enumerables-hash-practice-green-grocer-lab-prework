@@ -48,8 +48,7 @@ def checkout(cart, coupons)
   cart_with_coupons = apply_coupons(new_cart, coupons) #calls method with totals from first method 
   final_cart = apply_clearance(cart_with_coupons) #calls method with totals from first method and coupons from second 
   total = 0 #sets total price of the stuff in the cart to zero 
-  final_cart.each do |name, properties| #name- items in cart 
-    binding.pry
+  final_cart.each do |name, properties| # name- items in cart, properties- :price, :clearance, :count 
     total += properties[:price] * properties[:count]
   end
   total = total * 0.9 if total > 100
