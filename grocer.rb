@@ -1,35 +1,37 @@
 require "pry" 
- 
 
 def consolidate_cart(cart)
- total = {}
-  cart.each do |item|
+  new = {}
+  cart.each_with_index do |item|
     item.each do |food, info|
-      if total[food]
-        total[food][:count] += 1
+      if new[food]
+        new[food][:count] += 1
       else
-        total[food] = info 
-        total[food][:count] = 1
+        new[food] = info
+        new[food][:count] = 1
       end
     end
   end
-  total 
-end	
+  new
+end
 
- #binding.pry 
 def apply_coupons(cart, coupons)
    coupons.each do |sale| # loops over each item within the coupon hash 
       if cart.keys.include?(sale[:item]) #check if a coupon applies to something in the cart 
-          cart["#{sale[:item]} W/COUPON"] = {:price => (sale[:cost] = sale[:cost] / sale[:num]), :clearance => (cart[sale[:item]][:clearance]), :count => sale[:num]}
+          if cart[sale[:item]][:count] >= sale[:num]   
+          cart[sale[:item]][:count] -= sale[:num]
+              new_key = "#{sale[:item]} W/COUPON" 
+                if cart.keys.include?(new_key)
+                  cart[new_key][:count] += sale[:num]
+                  else 
+                    cart[new_key] = {:price => sale[:cost] / sale[:num], :clearance => cart[sale[:item]][:clearance], :count => sale[:num]}
+                    
+        end 
       end
-      if cart.keys.include?(sale[:item]) && cart[sale[:item]][:count] >= sale[:num] 
-      cart[sale[:item]][:count] -= sale[:num]
-     end 
-   end
- cart 
-end
-
-
+     end
+  end 
+  cart 
+end 
 
 def apply_clearance(cart)
    cart.each do |item, info|
@@ -42,10 +44,13 @@ def apply_clearance(cart)
 end
 
 def checkout(cart, coupons)
-  #.reduce.do ||
- # consolidate_cart
-#  apply_coupons
-#  apply_clearance
- # if total > 100
- #   total = total.round(2)
+  consolidated_cart = consolidate_cart(cart)
+  couponed_cart = apply_coupons(consolidated_cart, coupons)
+  final_cart = apply_clearance(couponed_cart)
+  total = 0
+  final_cart.each do |name, properties|
+    total += properties[:price] * properties[:count]
+  end
+  total = total * 0.9 if total > 100
+  total
 end
