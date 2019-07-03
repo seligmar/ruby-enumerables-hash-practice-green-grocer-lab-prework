@@ -46,10 +46,10 @@ end
 def checkout(cart, coupons)
   new_cart = consolidate_cart(cart) #calls method 
   cart_with_coupons = apply_coupons(new_cart, coupons) #calls method with totals from first method 
-  final_cart = apply_clearance(cart_with_coupons) #calls method with totals from first method and coupons from second 
+  final_cart_list = apply_clearance(cart_with_coupons) #calls method with totals from first method and coupons from second 
   total = 0 #sets total price of the stuff in the cart to zero 
-  final_cart.each do |name, properties| # name- items in cart, properties- :price, :clearance, :count 
-    total += properties[:price] * properties[:count] #figures out how much per item and how many exist in the cart 
+  final_cart_list.each do |name, info| # name- items in cart, properties- :price, :clearance, :count 
+    total += info[:price] * info[:count] #figures out how much per item and how many exist in the cart 
     # for both regular-priced and couponded items 
   end
   total = total * 0.9 if total > 100 #applies final discount 
